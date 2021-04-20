@@ -28,6 +28,10 @@ def train(opt):
         denoisenet.parameters(),
         lr=opt.lr,
         momentum=opt.momentum)
+
+    # for param_group in optimizer.param_groups:
+    #     print(param_group['lr'])
+
     train_writer = SummaryWriter(opt.summary_dir)
     # optionally resume from a checkpoint
     if opt.resume:
@@ -46,11 +50,14 @@ def train(opt):
         patch_radius=0.05,
         seed=opt.manualSeed,
         train_state='train')
+
     train_datasampler = RandomPointcloudPatchSampler(
         train_dataset,
         patches_per_shape=8000,
         seed=opt.manualSeed,
         identical_epochs=False)
+    # for x,y in enumerate(train_datasampler):
+    #     print(x)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset,
         sampler=train_datasampler,

@@ -19,7 +19,8 @@ def eval(opt):
     for shape_id, shape_name in enumerate(shape_names):
         print(shape_name)
         original_noise_pts = np.load(os.path.join(opt.testset, shape_name + '.npy'))
-        np.save(os.path.join(opt.save_dir, shape_name + '_pred_iter_0.npy'), original_noise_pts.astype('float32'))
+        # np.save(os.path.join(opt.save_dir, shape_name + '_pred_iter_0.npy'), original_noise_pts.astype('float32'))
+        np.savetxt(os.path.join(opt.save_dir, shape_name + '_pred_iter_0.xyz'), original_noise_pts,fmt='%.06f')
         for eval_index in range(opt.eval_iter_nums):
             print(eval_index)
             test_dataset = PointcloudPatchDataset(
@@ -53,8 +54,10 @@ def eval(opt):
                 pred_pts = np.append(pred_pts,
                                      np.squeeze(predict.data.cpu().numpy()) * patch_radius + noise_disp.numpy(),
                                      axis=0)
-            np.save(os.path.join(opt.save_dir, shape_name + '_pred_iter_' + str(eval_index + 1) + '.npy'),
-                    pred_pts.astype('float32'))
+            # np.save(os.path.join(opt.save_dir, shape_name + '_pred_iter_' + str(eval_index + 1) + '.npy'),
+            #         pred_pts.astype('float32'))
+            np.savetxt(os.path.join(opt.save_dir, shape_name + '_pred_iter_' + str(eval_index + 1) + '.xyz'),
+                    pred_pts,fmt='%.06f')
 
 
 
@@ -62,10 +65,11 @@ if __name__ == '__main__':
 
     parameters = parse_arguments()
     parameters.testset = './Dataset/Test'
-    #parameters.eval_dir = './Summary/pre_train_model/'
+    parameters.eval_dir = './Summary/Train/'
     parameters.batchSize = 64
-    parameters.workers = 8
-    parameters.save_dir = './Dataset/Results/'
+    # parameters.workers = 8
+    parameters.workers = 4
+    parameters.save_dir = './Dataset/MyResults/'
     parameters.eval_iter_nums = 2
     parameters.patch_radius = 0.05
     eval(parameters)
